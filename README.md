@@ -1,6 +1,6 @@
-# MUDewa Engine
+# MUDewa - a solo player MUD (lol)
 
-A simple, JSON-based MUD (Multi-User Dungeon) game engine written in Python. This single-player MUD allows you to explore a text-based world, interact with items, and save your progress.
+A simple, JSON-based MUD (Multi-User Dungeon) game written in Python. This single-player MUD allows you to explore a text-based world, interact with items, and save your progress.
 
 ## Architecture Overview
 
@@ -253,7 +253,7 @@ CommandHandler (coordinates between managers)
 1. Clone this repository:
 ```bash
 git clone <repository-url>
-cd pymud
+cd mudewa
 ```
 
 2. Create a virtual environment and activate it:
