@@ -1,0 +1,259 @@
+{
+  "name": "Default World",
+  "description": "A diverse world featuring forests, caves, and ancient ruins.",
+  "author": "MUDewa Team",
+  "version": "1.1",
+  "rooms": [
+    {
+      "id": "forest_clearing_001",
+      "short_desc": "A peaceful forest clearing",
+      "long_desc": "Sunlight filters through the dense canopy above, creating dancing patterns on the forest floor. The air here is fresh and filled with the sounds of birds and rustling leaves.",
+      "exits": {
+        "north": "forest_path_001",
+        "east": "forest_grove_001",
+        "south": "cave_entrance_001",
+        "west": "forest_edge_001"
+      },
+      "items": ["health_potion_001"],
+      "npcs": ["merchant_001"]
+    },
+    {
+      "id": "forest_path_001",
+      "short_desc": "A winding forest path",
+      "long_desc": "The path meanders through tall trees, their branches creating a natural archway overhead. Wildflowers dot the edges of the trail.",
+      "exits": {
+        "north": "forest_shrine_001",
+        "south": "forest_clearing_001"
+      }
+    },
+    {
+      "id": "forest_shrine_001",
+      "short_desc": "An ancient forest shrine",
+      "long_desc": "Stone markers arranged in a circle surround a small, weathered shrine. The air feels thick with ancient magic.",
+      "exits": {
+        "south": "forest_path_001",
+        "east": "mountain_base_001"
+      },
+      "items": ["magic_scroll_001"]
+    },
+    {
+      "id": "forest_grove_001",
+      "short_desc": "A mystical grove",
+      "long_desc": "Ancient trees form a perfect circle around this grove. Mysterious symbols are carved into their trunks, glowing faintly in the dim light.",
+      "exits": {
+        "west": "forest_clearing_001",
+        "north": "forest_spring_001"
+      }
+    },
+    {
+      "id": "forest_spring_001",
+      "short_desc": "A crystal-clear spring",
+      "long_desc": "A small spring bubbles up from between moss-covered rocks. The water is crystal clear and seems to sparkle with an inner light.",
+      "exits": {
+        "south": "forest_grove_001",
+        "east": "mountain_path_001"
+      },
+      "items": ["health_potion_001"]
+    },
+    {
+      "id": "forest_edge_001",
+      "short_desc": "The forest's edge",
+      "long_desc": "The dense forest thins out here, revealing glimpses of mountains in the distance. A cool breeze carries the scent of pine needles.",
+      "exits": {
+        "east": "forest_clearing_001",
+        "west": "mountain_trail_001"
+      }
+    },
+    {
+      "id": "cave_entrance_001",
+      "short_desc": "A dark cave entrance",
+      "long_desc": "The walls glisten with moisture, casting eerie reflections from your light source. The air is cool and damp, with the occasional sound of water droplets echoing in the distance.",
+      "exits": {
+        "north": "forest_clearing_001",
+        "down": "cave_tunnel_001"
+      },
+      "items": ["torch_001"],
+      "npcs": ["guard_001"]
+    },
+    {
+      "id": "cave_tunnel_001",
+      "short_desc": "A narrow cave tunnel",
+      "long_desc": "The tunnel twists downward, its walls rough and uneven. Your footsteps echo softly off the stone walls.",
+      "exits": {
+        "up": "cave_entrance_001",
+        "east": "cave_chamber_001"
+      }
+    },
+    {
+      "id": "cave_chamber_001",
+      "short_desc": "A large cave chamber",
+      "long_desc": "The chamber opens up into a vast space. Stalactites hang from the ceiling like stone teeth, and the air is thick with the scent of earth.",
+      "exits": {
+        "west": "cave_tunnel_001",
+        "north": "cave_pool_001",
+        "east": "cave_passage_001"
+      },
+      "items": ["rope_001"]
+    },
+    {
+      "id": "cave_pool_001",
+      "short_desc": "An underground pool",
+      "long_desc": "A still pool of dark water fills most of this chamber. The surface is like black glass, reflecting the glittering minerals in the ceiling.",
+      "exits": {
+        "south": "cave_chamber_001",
+        "down": "underwater_cave_001"
+      }
+    },
+    {
+      "id": "underwater_cave_001",
+      "short_desc": "A submerged cave",
+      "long_desc": "This partially flooded cave shimmers with an ethereal blue light. Phosphorescent algae cover the walls, providing natural illumination.",
+      "exits": {
+        "up": "cave_pool_001",
+        "east": "underwater_tunnel_001"
+      }
+    },
+    {
+      "id": "underwater_tunnel_001",
+      "short_desc": "A flooded tunnel",
+      "long_desc": "The tunnel is half-filled with crystal-clear water. Schools of blind cave fish dart away as you approach.",
+      "exits": {
+        "west": "underwater_cave_001",
+        "east": "temple_basement_001"
+      }
+    },
+    {
+      "id": "cave_passage_001",
+      "short_desc": "A winding passage",
+      "long_desc": "The passage curves and twists through the rock. Ancient carvings cover the walls, hinting at a forgotten civilization.",
+      "exits": {
+        "west": "cave_chamber_001",
+        "east": "temple_entrance_001"
+      }
+    },
+    {
+      "id": "temple_entrance_001",
+      "short_desc": "Temple entrance hall",
+      "long_desc": "Massive stone columns line this grand entrance hall. Despite its age, the craftsmanship is still evident in every carefully carved surface.",
+      "exits": {
+        "west": "cave_passage_001",
+        "north": "temple_courtyard_001",
+        "down": "temple_basement_001"
+      }
+    },
+    {
+      "id": "temple_basement_001",
+      "short_desc": "Temple basement",
+      "long_desc": "This flooded basement still shows signs of its former grandeur. Ornate carvings peek out from beneath years of mineral deposits.",
+      "exits": {
+        "up": "temple_entrance_001",
+        "west": "underwater_tunnel_001"
+      },
+      "items": ["enchanted_dagger_001"]
+    },
+    {
+      "id": "temple_courtyard_001",
+      "short_desc": "Overgrown temple courtyard",
+      "long_desc": "Nature has reclaimed this once-manicured courtyard. Vines climb the ancient stones, and flowers push up through cracks in the flagstones.",
+      "exits": {
+        "south": "temple_entrance_001",
+        "north": "temple_shrine_001",
+        "east": "temple_garden_001"
+      }
+    },
+    {
+      "id": "temple_shrine_001",
+      "short_desc": "Temple inner shrine",
+      "long_desc": "This sacred space remains largely intact. Golden light filters through holes in the ceiling, illuminating intricate mosaics on the walls.",
+      "exits": {
+        "south": "temple_courtyard_001",
+        "portal": {
+          "type": "world_transition",
+          "target_world": "spirit_realm",
+          "target_room": "spirit_entrance_001",
+          "description": "A shimmering portal of pure light hovers in the air.",
+          "requirements": {
+            "item": "spirit_key_001",
+            "level": 5
+          }
+        }
+      },
+      "items": ["key_001"]
+    },
+    {
+      "id": "temple_garden_001",
+      "short_desc": "Temple meditation garden",
+      "long_desc": "This peaceful garden seems frozen in time. A small stream still flows through carefully arranged rocks, and ancient trees provide shade.",
+      "exits": {
+        "west": "temple_courtyard_001",
+        "north": "mountain_base_001"
+      }
+    },
+    {
+      "id": "mountain_base_001",
+      "short_desc": "Mountain base",
+      "long_desc": "Steep cliffs rise up before you, their peaks lost in the clouds. A well-worn path winds its way upward.",
+      "exits": {
+        "south": "temple_garden_001",
+        "west": "forest_shrine_001",
+        "up": "mountain_path_001"
+      }
+    },
+    {
+      "id": "mountain_path_001",
+      "short_desc": "Mountain path",
+      "long_desc": "The path clings to the mountainside, offering breathtaking views of the forest below. The air grows thinner as you climb.",
+      "exits": {
+        "down": "mountain_base_001",
+        "west": "forest_spring_001",
+        "up": "mountain_ledge_001"
+      }
+    },
+    {
+      "id": "mountain_ledge_001",
+      "short_desc": "A precarious mountain ledge",
+      "long_desc": "The narrow ledge offers little room for movement. Far below, you can see the entire forest spread out like a green carpet.",
+      "exits": {
+        "down": "mountain_path_001",
+        "north": "mountain_cave_001"
+      }
+    },
+    {
+      "id": "mountain_cave_001",
+      "short_desc": "A mountain cave",
+      "long_desc": "This high-altitude cave provides shelter from the elements. Evidence of previous travelers can be seen in the old firepit and scattered supplies.",
+      "exits": {
+        "south": "mountain_ledge_001",
+        "west": "mountain_peak_001"
+      },
+      "items": ["health_potion_001"]
+    },
+    {
+      "id": "mountain_peak_001",
+      "short_desc": "Mountain peak",
+      "long_desc": "The air is thin but crystal clear at this lofty height. You can see for miles in every direction, and clouds drift by at eye level.",
+      "exits": {
+        "east": "mountain_cave_001",
+        "down": "mountain_trail_001"
+      }
+    },
+    {
+      "id": "mountain_trail_001",
+      "short_desc": "Rocky mountain trail",
+      "long_desc": "This treacherous trail winds between massive boulders. The path shows signs of recent rockslides, requiring careful navigation.",
+      "exits": {
+        "east": "forest_edge_001",
+        "up": "mountain_peak_001"
+      }
+    },
+    {
+      "id": "temple_treasury_001",
+      "short_desc": "Temple treasury",
+      "long_desc": "This hidden chamber glitters with the remnants of ancient wealth. Precious metals and gems still adorn the walls, though many valuables have long since been taken.",
+      "exits": {
+        "north": "temple_shrine_001"
+      },
+      "items": ["magic_scroll_001"]
+    }
+  ]
+} 

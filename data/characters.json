@@ -1,0 +1,86 @@
+{
+  "characters": [
+    {
+      "name": "TestHero",
+      "current_room": "temple_shrine_001",
+      "inventory": [
+        "ancient_coin_001",
+        "ancient_coin_001",
+        "ancient_coin_001",
+        "ancient_coin_001",
+        "key_001",
+        "ancient_coin_001",
+        "ancient_coin_001",
+        "ancient_coin_001",
+        "ancient_coin_001",
+        "ancient_coin_001",
+        "ancient_coin_001",
+        "ancient_coin_001",
+        "ancient_coin_001",
+        "key_001",
+        "key_001",
+        "ancient_coin_001",
+        "ancient_coin_001",
+        "ancient_coin_001",
+        "ancient_coin_001",
+        "ancient_coin_001",
+        "spirit_key_001",
+        "key_001",
+        "spirit_essence_001",
+        "spirit_essence_001",
+        "spirit_crystal_001",
+        "ancient_coin_001",
+        "key_001",
+        "key_001"
+      ],
+      "equipment": {
+        "weapon": "rusty_sword_001",
+        "armor": null,
+        "ring": null,
+        "amulet": null
+      },
+      "base_stats": {
+        "level": 1,
+        "max_hp": 100,
+        "current_hp": 32,
+        "attack": 10,
+        "defense": 5,
+        "xp": 0,
+        "xp_to_next_level": 100,
+        "weight_limit": 20.0
+      },
+      "stats": {
+        "level": 5,
+        "max_hp": 140,
+        "current_hp": 136,
+        "attack": 24,
+        "defense": 9,
+        "xp": 315,
+        "xp_to_next_level": 505,
+        "weight_limit": 28.0
+      },
+      "combat_state": {
+        "in_combat": false,
+        "target": null,
+        "turns_in_combat": 0,
+        "mob_state": null
+      },
+      "known_topics": {
+        "spirit_elder_001": [
+          "grove",
+          "spirits",
+          "power"
+        ]
+      },
+      "money": 240,
+      "defeated_mobs": {
+        "temple_shrine_001": [
+          "skeleton_001"
+        ]
+      },
+      "world_state": {
+        "removed_items": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "name": "Spirit Realm",
+  "description": "A mystical plane of existence where the boundaries between the physical and spiritual worlds blur.",
+  "rooms": [
+    {
+      "id": "spirit_entrance_001",
+      "short_desc": "Spirit Realm Gateway",
+      "long_desc": "Ethereal mists swirl around you in this otherworldly space. The very air seems to shimmer with spiritual energy. Ghostly wisps of light dance through the air, and the ground beneath your feet feels both solid and insubstantial at the same time.",
+      "exits": {
+        "north": "spirit_garden_001",
+        "east": "spirit_library_001",
+        "portal": {
+          "type": "world_transition",
+          "target_world": "default",
+          "target_room": "temple_shrine_001",
+          "description": "A portal of pure light offers passage back to the material world."
+        }
+      }
+    },
+    {
+      "id": "spirit_garden_001",
+      "short_desc": "Ethereal Garden",
+      "long_desc": "Luminescent flowers bloom in impossible colors, their petals floating upward instead of falling. Crystal trees chime softly in an unfelt breeze, their branches adorned with glowing spirit fruits.",
+      "exits": {
+        "south": "spirit_entrance_001",
+        "east": "spirit_pond_001",
+        "west": "spirit_grove_001"
+      },
+      "items": ["spirit_fruit_001"]
+    },
+    {
+      "id": "spirit_library_001",
+      "short_desc": "Library of Whispers",
+      "long_desc": "Spectral books float through the air, their pages turning by themselves. Knowledge seems to whisper directly into your mind. Ghostly scholars drift between towering shelves that extend impossibly upward into infinity.",
+      "exits": {
+        "west": "spirit_entrance_001",
+        "north": "spirit_study_001"
+      },
+      "npcs": ["spirit_sage_001"]
+    },
+    {
+      "id": "spirit_pond_001",
+      "short_desc": "Mirror of Souls",
+      "long_desc": "A perfectly still pond reflects not your physical form, but glimpses of your inner self. The water glows with an inner light, and occasionally ripples with images from other realms.",
+      "exits": {
+        "west": "spirit_garden_001",
+        "north": "spirit_shrine_001"
+      }
+    },
+    {
+      "id": "spirit_grove_001",
+      "short_desc": "Ancient Spirit Grove",
+      "long_desc": "Ancient spirit trees form a sacred circle, their trunks inscribed with glowing runes. The very air hums with ancestral power, and whispers of ancient wisdom echo in your mind.",
+      "exits": {
+        "east": "spirit_garden_001",
+        "up": "spirit_canopy_001"
+      },
+      "npcs": ["spirit_elder_001"]
+    },
+    {
+      "id": "spirit_shrine_001",
+      "short_desc": "Sanctuary of Light",
+      "long_desc": "Pure spiritual energy emanates from a central crystal altar. Ribbons of light weave through the air, and the boundaries between physical and spiritual seem thinnest here.",
+      "exits": {
+        "south": "spirit_pond_001",
+        "east": "spirit_chamber_001"
+      },
+      "items": ["spirit_crystal_001"]
+    },
+    {
+      "id": "spirit_study_001",
+      "short_desc": "Scholar's Sanctum",
+      "long_desc": "This quiet corner of the spirit library contains ancient artifacts and study areas. Ghostly writing appears and disappears on floating scrolls, recording eternal knowledge.",
+      "exits": {
+        "south": "spirit_library_001",
+        "northeast": "spirit_chamber_001"
+      },
+      "items": ["spirit_scroll_001"]
+    },
+    {
+      "id": "spirit_chamber_001",
+      "short_desc": "Chamber of Echoes",
+      "long_desc": "Every sound creates visible ripples in the air, echoing with spiritual resonance. The chamber seems to amplify and transform the energy of those within it.",
+      "exits": {
+        "west": "spirit_shrine_001",
+        "north": "spirit_nexus_001",
+        "southwest": "spirit_study_001"
+      }
+    },
+    {
+      "id": "spirit_canopy_001",
+      "short_desc": "Floating Spirit Canopy",
+      "long_desc": "Platforms of solidified light connect massive spirit trees high above the grove. The material world is visible far below, like a distant dream.",
+      "exits": {
+        "down": "spirit_grove_001",
+        "northeast": "spirit_nexus_001"
+      }
+    },
+    {
+      "id": "spirit_nexus_001",
+      "short_desc": "Spirit Realm Nexus",
+      "long_desc": "All paths in the Spirit Realm seem to converge at this nexus of pure spiritual energy. Reality itself seems fluid here, with doorways occasionally appearing and disappearing.",
+      "exits": {
+        "south": "spirit_chamber_001",
+        "southwest": "spirit_canopy_001"
+      },
+      "items": ["spirit_essence_001"]
+    }
+  ]
+} 

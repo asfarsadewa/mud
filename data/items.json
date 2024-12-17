@@ -1,0 +1,246 @@
+{
+  "items": [
+    {
+      "id": "sword_001",
+      "short_desc": "a rusty sword",
+      "long_desc": "This sword has seen better days. The blade is covered in rust, but it still maintains a somewhat sharp edge. The leather grip is worn but serviceable.",
+      "properties": {
+        "type": "weapon",
+        "damage": 5,
+        "weight": 3.0,
+        "respawnable": false
+      }
+    },
+    {
+      "id": "key_001",
+      "short_desc": "a very small bronze key",
+      "long_desc": "The key looks old and worn, its bronze surface patinated with age. Strange symbols are etched into its bow.",
+      "properties": {
+        "type": "key",
+        "weight": 0.1,
+        "respawnable": false
+      }
+    },
+    {
+      "id": "health_potion_001",
+      "short_desc": "a red healing potion",
+      "long_desc": "A small glass vial containing a bright red liquid. The label reads 'Healing Potion - Restores 25 Health'.",
+      "properties": {
+        "type": "consumable",
+        "weight": 0.5,
+        "respawnable": true,
+        "respawn_time": 300
+      },
+      "use_effect": {
+        "type": "heal",
+        "amount": 25
+      }
+    },
+    {
+      "id": "torch_001",
+      "short_desc": "a wooden torch",
+      "long_desc": "A sturdy wooden torch wrapped with oil-soaked cloth. It can provide light in dark places.",
+      "properties": {
+        "type": "tool",
+        "effect": "light",
+        "weight": 1.0,
+        "respawnable": true,
+        "respawn_time": 600
+      }
+    },
+    {
+      "id": "rope_001",
+      "short_desc": "a coil of rope",
+      "long_desc": "A strong hemp rope, about 50 feet in length. Could be useful for climbing or tying things.",
+      "properties": {
+        "type": "tool",
+        "length": 50,
+        "weight": 2.5,
+        "respawnable": true,
+        "respawn_time": 600
+      }
+    },
+    {
+      "id": "magic_scroll_001",
+      "short_desc": "a glowing scroll",
+      "long_desc": "An ancient scroll that radiates magical energy. The parchment seems to shimmer with an inner light.",
+      "properties": {
+        "type": "magic",
+        "spell": "teleport",
+        "weight": 0.2,
+        "respawnable": false
+      }
+    },
+    {
+      "id": "enchanted_dagger_001",
+      "short_desc": "an enchanted dagger",
+      "long_desc": "A finely crafted dagger with mystical runes etched along its blade. The metal seems to pulse with magical energy.",
+      "properties": {
+        "type": "weapon",
+        "damage": 15,
+        "magic": true,
+        "weight": 1.5,
+        "respawnable": false
+      }
+    },
+    {
+      "id": "wolf_pelt_001",
+      "short_desc": "a grey wolf pelt",
+      "long_desc": "A thick, grey wolf pelt. The fur is soft and would fetch a good price from a merchant.",
+      "properties": {
+        "type": "material",
+        "value": 30,
+        "weight": 2.0,
+        "respawnable": true,
+        "respawn_time": 1800
+      }
+    },
+    {
+      "id": "spider_silk_001",
+      "short_desc": "shimmering spider silk",
+      "long_desc": "Strands of incredibly strong spider silk that shimmer in the light. Highly valued by crafters.",
+      "properties": {
+        "type": "material",
+        "value": 40,
+        "weight": 0.3,
+        "respawnable": true,
+        "respawn_time": 1800
+      }
+    },
+    {
+      "id": "poison_sac_001",
+      "short_desc": "a spider poison sac",
+      "long_desc": "A carefully extracted poison sac from a cave spider. Could be useful for creating potions or coating weapons.",
+      "properties": {
+        "type": "material",
+        "value": 25,
+        "effect": "poison",
+        "weight": 0.2,
+        "respawnable": true,
+        "respawn_time": 1800
+      }
+    },
+    {
+      "id": "ancient_coin_001",
+      "short_desc": "an ancient gold coin",
+      "long_desc": "A perfectly preserved gold coin from an ancient civilization. Collectors would pay handsomely for such a find.",
+      "properties": {
+        "type": "treasure",
+        "value": 100,
+        "weight": 0.1,
+        "respawnable": false
+      }
+    },
+    {
+      "id": "rusty_sword_001",
+      "short_desc": "an ancient rusty sword",
+      "long_desc": "Despite its age and rust, this ancient sword still holds a keen edge. The craftsmanship is remarkable.",
+      "properties": {
+        "type": "weapon",
+        "damage": 8,
+        "value": 45,
+        "weight": 3.0,
+        "respawnable": false
+      }
+    },
+    {
+      "id": "goat_horn_001",
+      "short_desc": "a mountain goat horn",
+      "long_desc": "A curved horn from a mountain goat. Could be carved into various tools or decorative items.",
+      "properties": {
+        "type": "material",
+        "value": 20,
+        "weight": 0.8,
+        "respawnable": true,
+        "respawn_time": 1800
+      }
+    },
+    {
+      "id": "tough_hide_001",
+      "short_desc": "tough goat hide",
+      "long_desc": "A piece of thick, tough hide from a mountain goat. Useful for crafting leather goods.",
+      "properties": {
+        "type": "material",
+        "value": 25,
+        "weight": 1.5,
+        "respawnable": true,
+        "respawn_time": 1800
+      }
+    },
+    {
+      "id": "spirit_key_001",
+      "short_desc": "Ethereal Key",
+      "long_desc": "A translucent key that seems to phase in and out of existence. It hums with spiritual energy.",
+      "properties": {
+        "type": "key",
+        "value": 500,
+        "weight": 0.0,
+        "respawnable": false
+      }
+    },
+    {
+      "id": "spirit_fruit_001",
+      "short_desc": "Glowing Spirit Fruit",
+      "long_desc": "A luminescent fruit that floats slightly above your palm. It radiates peaceful energy.",
+      "properties": {
+        "type": "consumable",
+        "heal": 50,
+        "value": 100,
+        "weight": 0.3,
+        "respawnable": true,
+        "respawn_time": 900
+      }
+    },
+    {
+      "id": "spirit_crystal_001",
+      "short_desc": "Pure Spirit Crystal",
+      "long_desc": "A perfect crystal that captures and amplifies spiritual energy. It pulses with an inner light.",
+      "properties": {
+        "type": "artifact",
+        "value": 1000,
+        "weight": 0.5,
+        "respawnable": false
+      }
+    },
+    {
+      "id": "spirit_scroll_001",
+      "short_desc": "Spectral Scroll",
+      "long_desc": "A scroll covered in shifting, ghostly writing. Knowledge seems to flow directly into your mind when you look at it.",
+      "properties": {
+        "type": "scroll",
+        "value": 300,
+        "weight": 0.1,
+        "respawnable": false
+      }
+    },
+    {
+      "id": "spirit_essence_001",
+      "short_desc": "Concentrated Spirit Essence",
+      "long_desc": "A swirling vial of pure spiritual energy. It could be used to enhance equipment or restore spiritual power.",
+      "properties": {
+        "type": "consumable",
+        "mana": 100,
+        "value": 750,
+        "weight": 0.4,
+        "respawnable": true,
+        "respawn_time": 1800
+      }
+    },
+    {
+      "id": "max_heal_potion_001",
+      "short_desc": "a golden healing potion",
+      "long_desc": "An ornate crystal vial containing a shimmering golden liquid. The label reads 'Elixir of Full Restoration - Restores All Health'.",
+      "properties": {
+        "type": "consumable",
+        "value": 200,
+        "weight": 0.5,
+        "respawnable": true,
+        "respawn_time": 3600
+      },
+      "use_effect": {
+        "type": "heal",
+        "amount": 999999
+      }
+    }
+  ]
+}

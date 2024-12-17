@@ -1,0 +1,95 @@
+{
+  "mobs": [
+    {
+      "id": "wolf_001",
+      "name": "Forest Wolf",
+      "short_desc": "a grey wolf",
+      "long_desc": "A lean grey wolf with piercing yellow eyes. Its fur is matted and it looks hungry.",
+      "level": 1,
+      "stats": {
+        "max_hp": 30,
+        "current_hp": 30,
+        "attack": 5,
+        "defense": 2,
+        "xp_value": 20
+      },
+      "loot_table": {
+        "wolf_pelt_001": 0.7,
+        "health_potion_001": 0.3
+      },
+      "spawn_areas": [
+        "forest_path_001",
+        "forest_edge_001"
+      ]
+    },
+    {
+      "id": "spider_001",
+      "name": "Cave Spider",
+      "short_desc": "a large cave spider",
+      "long_desc": "A dark, hairy spider the size of a large dog. Its eight eyes gleam menacingly in the darkness.",
+      "level": 2,
+      "stats": {
+        "max_hp": 25,
+        "current_hp": 25,
+        "attack": 8,
+        "defense": 1,
+        "xp_value": 25
+      },
+      "loot_table": {
+        "spider_silk_001": 0.8,
+        "poison_sac_001": 0.4
+      },
+      "spawn_areas": [
+        "cave_tunnel_001",
+        "cave_chamber_001"
+      ]
+    },
+    {
+      "id": "skeleton_001",
+      "name": "Temple Guardian",
+      "short_desc": "an ancient skeleton warrior",
+      "long_desc": "A skeleton clad in rusted armor, animated by dark magic. It clutches an ancient sword in its bony hands.",
+      "level": 3,
+      "stats": {
+        "max_hp": 40,
+        "current_hp": 40,
+        "attack": 10,
+        "defense": 5,
+        "xp_value": 35
+      },
+      "loot_table": {
+        "ancient_coin_001": 0.9,
+        "rusty_sword_001": 0.5,
+        "spirit_key_001": 0.2
+      },
+      "spawn_areas": [
+        "temple_entrance_001",
+        "temple_courtyard_001",
+        "temple_shrine_001"
+      ]
+    },
+    {
+      "id": "mountain_goat_001",
+      "name": "Mountain Goat",
+      "short_desc": "an aggressive mountain goat",
+      "long_desc": "A sturdy mountain goat with sharp horns. It seems territorial and ready to defend its turf.",
+      "level": 1,
+      "stats": {
+        "max_hp": 20,
+        "current_hp": 20,
+        "attack": 4,
+        "defense": 3,
+        "xp_value": 15
+      },
+      "loot_table": {
+        "goat_horn_001": 0.6,
+        "tough_hide_001": 0.4
+      },
+      "spawn_areas": [
+        "mountain_trail_001",
+        "mountain_ledge_001",
+        "mountain_path_001"
+      ]
+    }
+  ]
+}

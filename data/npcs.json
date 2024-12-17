@@ -1,0 +1,119 @@
+{
+  "npcs": [
+    {
+      "id": "merchant_001",
+      "name": "Old Merchant",
+      "short_desc": "a weathered merchant",
+      "long_desc": "An elderly merchant with kind eyes and a well-worn traveling cloak. His pack seems full of interesting wares.",
+      "dialogue": {
+        "greeting": "Welcome, traveler! Care to see my wares?",
+        "topics": {
+          "wares": {
+            "prompt": "What do you have for sale?",
+            "response": "Ah, I have many fine items! Though I'm afraid my trading days are over until I find my lost key...",
+            "leads_to": ["key", "trade"]
+          },
+          "key": {
+            "prompt": "Tell me about this key.",
+            "response": "I lost my bronze key somewhere in the forest clearing. Without it, I can't access my best merchandise.",
+            "requires_topic": "wares"
+          },
+          "trade": {
+            "prompt": "Let's trade.",
+            "response": "Let me show you what I have available. Use 'list' to see my wares, 'buy <item>' to purchase, or 'sell <item>' to sell.",
+            "requires_topic": "wares",
+            "is_trade": true
+          }
+        }
+      },
+      "merchant_data": {
+        "inventory": {
+          "health_potion_001": {
+            "price": 50,
+            "quantity": 5
+          },
+          "torch_001": {
+            "price": 10,
+            "quantity": 10
+          },
+          "rope_001": {
+            "price": 25,
+            "quantity": 3
+          }
+        },
+        "buy_multiplier": 0.5,
+        "unlocked": false,
+        "premium_inventory": {
+          "magic_scroll_001": {
+            "price": 200,
+            "quantity": 1
+          },
+          "enchanted_dagger_001": {
+            "price": 300,
+            "quantity": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "guard_001",
+      "name": "Cave Guard",
+      "short_desc": "a stern-looking guard",
+      "long_desc": "A vigilant guard in leather armor stands here, keeping watch over the cave entrance. A worn sword hangs at their belt.",
+      "dialogue": {
+        "greeting": "Halt! State your business, traveler.",
+        "topics": {
+          "cave": {
+            "prompt": "What are you guarding?",
+            "response": "This cave leads to an ancient temple. I'm here to make sure only worthy adventurers enter."
+          },
+          "temple": {
+            "prompt": "Tell me about the temple.",
+            "response": "The temple holds many secrets. But you'll need to prove your worth before I can let you explore further.",
+            "requires_topic": "cave"
+          }
+        }
+      }
+    },
+    {
+      "id": "spirit_sage_001",
+      "name": "Spirit Sage",
+      "short_desc": "A wise ethereal being floats serenely nearby",
+      "long_desc": "The Spirit Sage's form shifts between that of an elderly scholar and pure energy. Their eyes hold the wisdom of countless ages.",
+      "dialogue": {
+        "greeting": "Welcome, seeker of knowledge. The Library of Whispers holds many secrets.",
+        "topics": {
+          "library": "This library exists in both the physical and spiritual realms. The knowledge here transcends mortal understanding.",
+          "spirit realm": "You stand in a realm between realms, where thought and reality intertwine. Few mortals journey here.",
+          "wisdom": "True wisdom comes from understanding both the physical and spiritual aspects of existence."
+        }
+      },
+      "merchant": {
+        "type": "trader",
+        "items": ["spirit_scroll_001", "spirit_essence_001"],
+        "buy_multiplier": 0.5,
+        "sell_multiplier": 2.0
+      }
+    },
+    {
+      "id": "spirit_elder_001",
+      "name": "Ancient Spirit Elder",
+      "short_desc": "A majestic spirit being tends to the sacred grove",
+      "long_desc": "The Elder appears as a towering figure of pure light, occasionally taking the form of an ancient tree. They radiate both power and tranquility.",
+      "dialogue": {
+        "greeting": "Your presence in the grove is felt, wanderer. What guidance do you seek?",
+        "topics": {
+          "grove": "This grove has existed since the first spirits awakened. It is a nexus of natural and spiritual forces.",
+          "spirits": "We are the guardians of balance between your realm and ours. Some call us gods, but we are simply keepers of ancient ways.",
+          "power": "True power lies not in dominion over others, but in understanding the connections between all things."
+        }
+      },
+      "merchant": {
+        "type": "trader",
+        "items": ["spirit_fruit_001", "spirit_crystal_001"],
+        "buy_multiplier": 0.5,
+        "sell_multiplier": 2.0
+      }
+    }
+  ]
+} 
