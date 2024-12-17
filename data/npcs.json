@@ -16,7 +16,13 @@
           "key": {
             "prompt": "Tell me about this key.",
             "response": "I lost my bronze key somewhere in the forest clearing. Without it, I can't access my best merchandise.",
-            "requires_topic": "wares"
+            "requires_topic": "wares",
+            "item_requirement": "key_001",
+            "success_response": "Ah! I see you have my key! Thank you, friend. Now I can show you my premium merchandise. Use 'list' to see my full selection.",
+            "effects": {
+              "unlock_merchant": true,
+              "remove_item": false
+            }
           },
           "trade": {
             "prompt": "Let's trade.",
@@ -65,12 +71,30 @@
         "topics": {
           "cave": {
             "prompt": "What are you guarding?",
-            "response": "This cave leads to an ancient temple. I'm here to make sure only worthy adventurers enter."
+            "response": "This cave leads to an ancient temple. I'm here to make sure only worthy adventurers enter.",
+            "leads_to": ["temple", "worth"]
           },
           "temple": {
             "prompt": "Tell me about the temple.",
             "response": "The temple holds many secrets. But you'll need to prove your worth before I can let you explore further.",
-            "requires_topic": "cave"
+            "requires_topic": "cave",
+            "leads_to": ["worth"]
+          },
+          "worth": {
+            "prompt": "How can I prove my worth?",
+            "response": "Bring me a spirit crystal as proof of your spiritual attunement. Only then will I know you're ready.",
+            "requires_topic": "temple",
+            "item_requirement": "spirit_crystal_001",
+            "success_response": "Ah, you possess a spirit crystal! Your spiritual attunement is evident. You may enter the temple.",
+            "effects": {
+              "unlock_topics": ["enter"],
+              "remove_item": false
+            }
+          },
+          "enter": {
+            "prompt": "I'd like to enter the temple.",
+            "response": "Of course. Your spirit crystal marks you as worthy. The way is open to you now.",
+            "requires_topic": "worth"
           }
         }
       }
@@ -83,16 +107,47 @@
       "dialogue": {
         "greeting": "Welcome, seeker of knowledge. The Library of Whispers holds many secrets.",
         "topics": {
-          "library": "This library exists in both the physical and spiritual realms. The knowledge here transcends mortal understanding.",
-          "spirit realm": "You stand in a realm between realms, where thought and reality intertwine. Few mortals journey here.",
-          "wisdom": "True wisdom comes from understanding both the physical and spiritual aspects of existence."
+          "library": {
+            "prompt": "Tell me about this library.",
+            "response": "This library exists in both the physical and spiritual realms. The knowledge here transcends mortal understanding.",
+            "leads_to": ["knowledge", "study"]
+          },
+          "spirit realm": {
+            "prompt": "What is this spirit realm?",
+            "response": "You stand in a realm between realms, where thought and reality intertwine. Few mortals journey here."
+          },
+          "knowledge": {
+            "prompt": "I seek ancient knowledge.",
+            "response": "To access our deepest mysteries, you must prove your dedication. Bring me a spirit essence, and I shall share our secrets.",
+            "requires_topic": "library",
+            "item_requirement": "spirit_essence_001",
+            "success_response": "Your offering of spirit essence shows true dedication. I will now share our ancient knowledge with you.",
+            "effects": {
+              "remove_item": true,
+              "add_item": "spirit_scroll_001",
+              "unlock_topics": ["secrets"]
+            }
+          },
+          "secrets": {
+            "prompt": "Tell me the ancient secrets.",
+            "response": "The scroll I gave you contains our most profound teachings. Study it well, and return if you seek more wisdom.",
+            "requires_topic": "knowledge"
+          }
         }
       },
-      "merchant": {
-        "type": "trader",
-        "items": ["spirit_scroll_001", "spirit_essence_001"],
+      "merchant_data": {
+        "inventory": {
+          "spirit_scroll_001": {
+            "price": 300,
+            "quantity": 1
+          },
+          "spirit_essence_001": {
+            "price": 750,
+            "quantity": 2
+          }
+        },
         "buy_multiplier": 0.5,
-        "sell_multiplier": 2.0
+        "unlocked": true
       }
     },
     {
@@ -103,16 +158,53 @@
       "dialogue": {
         "greeting": "Your presence in the grove is felt, wanderer. What guidance do you seek?",
         "topics": {
-          "grove": "This grove has existed since the first spirits awakened. It is a nexus of natural and spiritual forces.",
-          "spirits": "We are the guardians of balance between your realm and ours. Some call us gods, but we are simply keepers of ancient ways.",
-          "power": "True power lies not in dominion over others, but in understanding the connections between all things."
+          "grove": {
+            "prompt": "Tell me about this grove.",
+            "response": "This grove has existed since the first spirits awakened. It is a nexus of natural and spiritual forces.",
+            "leads_to": ["offering", "spirits"]
+          },
+          "spirits": {
+            "prompt": "Who are the spirits?",
+            "response": "We are the guardians of balance between your realm and ours. Some call us gods, but we are simply keepers of ancient ways.",
+            "leads_to": ["power"]
+          },
+          "power": {
+            "prompt": "Teach me about power.",
+            "response": "True power lies not in dominion over others, but in understanding the connections between all things."
+          },
+          "offering": {
+            "prompt": "I wish to make an offering.",
+            "response": "The grove accepts offerings of spirit essence. Those who give freely may receive the grove's blessing.",
+            "requires_topic": "grove",
+            "item_requirement": "spirit_essence_001",
+            "success_response": "Your offering pleases the grove. Take this spirit fruit as a symbol of our blessing.",
+            "effects": {
+              "remove_item": true,
+              "add_item": "spirit_fruit_001",
+              "add_money": 100,
+              "unlock_topics": ["blessing"]
+            }
+          },
+          "blessing": {
+            "prompt": "Tell me about the blessing.",
+            "response": "The grove's blessing manifests differently for each seeker. Use it wisely.",
+            "requires_topic": "offering"
+          }
         }
       },
-      "merchant": {
-        "type": "trader",
-        "items": ["spirit_fruit_001", "spirit_crystal_001"],
+      "merchant_data": {
+        "inventory": {
+          "spirit_fruit_001": {
+            "price": 100,
+            "quantity": 1
+          },
+          "spirit_crystal_001": {
+            "price": 1000,
+            "quantity": 1
+          }
+        },
         "buy_multiplier": 0.5,
-        "sell_multiplier": 2.0
+        "unlocked": true
       }
     }
   ]

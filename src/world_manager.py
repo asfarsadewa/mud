@@ -1,8 +1,9 @@
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple, Any
 from .data_manager import DataManager
 import os
 import json
 import time
+from datetime import datetime
 
 class WorldManager:
     def __init__(self, data_manager: DataManager):
@@ -11,6 +12,8 @@ class WorldManager:
         self.loaded_worlds = {}  # Cache for loaded world files
         self.current_world = "default"  # Track current active world
         self.original_items = {}  # Track original item locations
+        self.last_load_time = {}
+        self.ai_helper = None  # Will be set after initialization
         self.load_world(self.current_world)
 
     def load_world(self, world_name: str) -> Dict:
@@ -52,15 +55,74 @@ class WorldManager:
                 if target_room_id not in room_ids:
                     print(f"Warning: Room {room['id']} has invalid exit {direction} to non-existent room {target_room_id}")
 
-    def get_room_description(self, room_id: str, show_long: bool = True) -> str:
+    def set_ai_helper(self, ai_helper):
+        """Set the AI helper for enhanced descriptions."""
+        self.ai_helper = ai_helper
+
+    def get_time_of_day(self) -> str:
+        """Get the current time of day period."""
+        hour = datetime.now().hour
+        if 5 <= hour < 8:
+            return "dawn"
+        elif 8 <= hour < 12:
+            return "morning"
+        elif 12 <= hour < 17:
+            return "afternoon"
+        elif 17 <= hour < 20:
+            return "evening"
+        elif 20 <= hour < 22:
+            return "dusk"
+        else:
+            return "night"
+
+    async def get_enhanced_description(self, base_description: str, room: Dict) -> str:
+        """Get an AI-enhanced room description based on time of day."""
+        if not self.ai_helper:
+            return base_description
+            
+        try:
+            time_of_day = self.get_time_of_day()
+            context = {
+                "time_of_day": time_of_day,
+                "room_type": room.get("type", "generic"),
+                "world_name": self.current_world
+            }
+            
+            prompt = (
+                "You are a descriptive writer tasked with enhancing a room description. "
+                "Rules:\n"
+                "1. NEVER add welcome messages or greetings\n"
+                "2. ONLY describe the room and its atmosphere\n"
+                "3. Keep all key information from the original\n"
+                "4. Add time-specific atmospheric details\n"
+                "5. Return ONLY the enhanced description\n\n"
+                f"Time of day: {time_of_day}\n"
+                f"Original description: {base_description}\n\n"
+                "Enhance the description with sensory details appropriate for the time of day, "
+                "including lighting, shadows, sounds, and atmosphere. "
+                "Focus on how the time of day affects the scene."
+            )
+            
+            enhanced = await self.ai_helper.generate_response(prompt, context)
+            return enhanced if enhanced != prompt else base_description
+            
+        except Exception:
+            return base_description
+
+    async def get_room_description(self, room_id: str, show_long: bool = True) -> str:
         """Get the description of a room."""
         room = self.get_room(room_id)
         if not room:
             return "Error: Room not found"
 
         # Get the basic description
-        description = room["long_desc"] if show_long else room["short_desc"]
-
+        base_desc = room["long_desc"] if show_long else room["short_desc"]
+        
+        # Enhance the description with AI if available
+        description = base_desc
+        if show_long and self.ai_helper:
+            description = await self.get_enhanced_description(base_desc, room)
+        
         # Add exits information
         exits = room.get("exits", {})
         if exits:

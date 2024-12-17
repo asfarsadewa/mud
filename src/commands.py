@@ -3,6 +3,7 @@ from .data_manager import DataManager
 from .character_manager import CharacterManager
 from .world_manager import WorldManager
 from .combat_manager import CombatManager
+import asyncio
 
 class CommandHandler:
     def __init__(self, data_manager: DataManager, character_manager: CharacterManager, world_manager: WorldManager):
@@ -11,7 +12,7 @@ class CommandHandler:
         self.world_manager = world_manager
         self.combat_manager = CombatManager(data_manager, world_manager)  # Pass both managers
         
-    def handle_command(self, character_name: str, command: str) -> Tuple[bool, str]:
+    async def handle_command(self, character_name: str, command: str) -> Tuple[bool, str]:
         """Handle a command from a player."""
         parts = command.lower().split()
         if not parts:
@@ -19,10 +20,6 @@ class CommandHandler:
             
         cmd = parts[0]
         args = parts[1:]
-        
-        # Handle quit command first
-        if cmd == "quit":
-            return True, "Thanks for playing! Goodbye!"
         
         # Get fresh character data
         character = self.character_manager.get_character(character_name)
@@ -74,15 +71,21 @@ class CommandHandler:
             "help": lambda args: self.cmd_help(character_name, args),
             "sacrifice": lambda args: self.cmd_sacrifice(character_name, args),
             "sac": lambda args: self.cmd_sacrifice(character_name, args),
-            "ask": lambda args: self.cmd_ask(character_name, args)
+            "ask": lambda args: self.cmd_ask(character_name, args),
+            "quit": lambda args: self.cmd_quit(character_name, args),
+            "q": lambda args: self.cmd_quit(character_name, args)
         }
         
         if cmd in commands:
-            return commands[cmd](args)
-        else:
-            return False, "Unknown command. Type 'help' for a list of commands."
+            result = commands[cmd](args)
+            # If it's an async command, await it
+            if asyncio.iscoroutine(result):
+                return await result
+            return result
+        
+        return False, "Unknown command. Type 'help' for a list of commands."
 
-    def cmd_go(self, character_name: str, args: List[str]) -> Tuple[bool, str]:
+    async def cmd_go(self, character_name: str, args: List[str]) -> Tuple[bool, str]:
         """Handle the go command."""
         if not args:
             return False, "Go where? Please specify a direction."
@@ -112,16 +115,20 @@ class CommandHandler:
                 return False, "Error: Could not load target world."
 
             self.character_manager.set_current_room(exit_data["target_room"])
-            return False, f"{exit_data['description']}\n\n{self.world_manager.get_room_description(exit_data['target_room'], show_long=True)}"
+            description = await self.world_manager.get_room_description(exit_data["target_room"], show_long=True)
+            return False, f"{exit_data['description']}\n\n{description}"
 
         # Handle regular room movement
         self.character_manager.set_current_room(exit_data["target"])
-        return False, self.world_manager.get_room_description(exit_data["target"], show_long=True)
+        description = await self.world_manager.get_room_description(exit_data["target"], show_long=True)
+        return False, description
 
-    def cmd_look(self, character_name: str, args: List[str]) -> Tuple[bool, str]:
+    async def cmd_look(self, character_name: str, args: List[str]) -> Tuple[bool, str]:
         """Handle the look command."""
+        # Set the current character first
+        self.character_manager.load_character(character_name)
         current_room = self.character_manager.get_current_room()
-        description = self.world_manager.get_room_description(current_room)
+        description = await self.world_manager.get_room_description(current_room)
         return False, description
 
     def cmd_inventory(self, character_name: str, args: List[str]) -> Tuple[bool, str]:
@@ -166,7 +173,7 @@ class CommandHandler:
 
         # Build the fancy inventory display
         sections = []
-        sections.append("╔══════════════════════════════════════════════════════════╗")
+        sections.append("╔══════════════════════════════╦═════════════════════╗")
         sections.append(f"║                     INVENTORY                           ║")
         sections.append("╠══════════════════════════════════════════════════════════╣")
         sections.append(f"║  Total Weight: {total_weight:.1f}kg                                    ║")
@@ -242,7 +249,7 @@ class CommandHandler:
         # Add money at the bottom
         money = character.get("money", 0)
         sections.append("╠═══════════════════════════════════════════════════════════╣")
-        sections.append(f"║  Money: {money:<47} coins ║")
+        sections.append(f"║  Money: {money:<47} coins ��")
         sections.append("╚══════════════════════════════════════════════════════════╝")
 
         return False, "\n".join(sections)
@@ -950,7 +957,7 @@ class CommandHandler:
         map_lines.append(f"\nWorld Map: {current_world.title()}")
         map_lines.append("=" * 40)
         map_lines.append("Legend: * = You are here")
-        map_lines.append("       → ← ↑ ↓ = Regular connections")
+        map_lines.append("       → ↑ ↓ = Regular connections")
         map_lines.append("       ⊗ = Portal to another realm")
         map_lines.append("")
 
@@ -1050,38 +1057,26 @@ class CommandHandler:
         return False, f"You sacrifice {item['short_desc']} to the gods. (+1 XP)"
 
     def cmd_ask(self, character_name: str, args: List[str]) -> Tuple[bool, str]:
-        """Handle asking NPCs about topics."""
-        if len(args) < 2:
-            return False, "Ask whom about what?"
+        """Handle the ask command."""
+        if not args:
+            return False, "Ask who about what?"
 
-        # Find the NPC name and topic
-        # Format: ask <npc> about <topic>
-        try:
-            npc_parts = []
-            topic_parts = []
-            found_about = False
-            
-            for word in args:
-                if word.lower() == "about":
-                    found_about = True
-                    continue
-                if found_about:
-                    topic_parts.append(word)
-                else:
-                    npc_parts.append(word)
-            
-            if not found_about:
-                # Try to split at the last word as the topic
-                npc_parts = args[:-1]
-                topic_parts = [args[-1]]
-                
-            npc_name = " ".join(npc_parts).lower()
-            topic = " ".join(topic_parts).lower()
-        except:
-            return False, "Usage: ask <npc> about <topic>"
+        # Split into NPC name and topic
+        *npc_words, topic = args
+        if not npc_words:
+            return False, "Ask who?"
+        if not topic:
+            return False, "Ask about what?"
 
-        # Find the NPC
+        npc_name = " ".join(npc_words)
+        topic = topic.lower()
+
+        # Get current room
         current_room = self.character_manager.get_current_room()
+        if not current_room:
+            return False, "Error: No current room"
+
+        # Find NPC in room
         npc = self.world_manager.get_npc_in_room(current_room, npc_name)
         if not npc:
             return False, f"You don't see {npc_name} here."
@@ -1118,7 +1113,33 @@ class CommandHandler:
             if topic_data["requires_topic"] not in known_topics:
                 return False, f"{npc['name']} isn't ready to discuss that yet."
 
+        # Get base response
         response = topic_data["response"]
+        
+        # Handle quest item requirements and effects
+        if "item_requirement" in topic_data:
+            inventory = self.character_manager.get_inventory()
+            required_item = topic_data["item_requirement"]
+            if required_item in inventory:
+                # If item found, use alternate response if provided
+                if "success_response" in topic_data:
+                    response = topic_data["success_response"]
+                    
+                # Apply any effects defined for having the item
+                if "effects" in topic_data:
+                    effects = topic_data["effects"]
+                    if "unlock_merchant" in effects and "merchant_data" in npc:
+                        npc["merchant_data"]["unlocked"] = True
+                    if "remove_item" in effects and effects["remove_item"]:
+                        self.character_manager.remove_from_inventory(required_item)
+                    if "add_item" in effects:
+                        self.character_manager.add_to_inventory(effects["add_item"])
+                    if "add_money" in effects:
+                        self.character_manager.add_money(effects["add_money"])
+                    if "unlock_topics" in effects:
+                        for new_topic in effects["unlock_topics"]:
+                            self.character_manager.add_known_topic(npc["id"], new_topic)
+
         # Add topic to known topics
         self.character_manager.add_known_topic(npc["id"], topic_id)
 
@@ -1127,3 +1148,7 @@ class CommandHandler:
             npc["merchant_data"]["unlocked"] = True
 
         return False, f"{npc['name']} says: \"{response}\""
+
+    def cmd_quit(self, character_name: str, args: List[str]) -> Tuple[bool, str]:
+        """Handle the quit command."""
+        return True, "Thanks for playing! Goodbye!"

@@ -1,46 +1,86 @@
-from typing import Optional
+"""Main game module."""
+
 import os
 import sys
+import asyncio
+from typing import Optional, Tuple
+from dotenv import load_dotenv
 from .data_manager import DataManager
 from .character_manager import CharacterManager
 from .world_manager import WorldManager
+from .combat_manager import CombatManager
 from .commands import CommandHandler
+from .ai_helper import GeminiHelper
+
+# Load environment variables from .env file
+load_dotenv()
 
 class Game:
+    """Main game class."""
+    
     def __init__(self):
+        """Initialize the game."""
         self.data_manager = DataManager()
         self.character_manager = CharacterManager(self.data_manager)
         self.world_manager = WorldManager(self.data_manager)
+        self.combat_manager = CombatManager(self.data_manager, self.world_manager)
         self.command_handler = CommandHandler(
             self.data_manager,
             self.character_manager,
             self.world_manager
         )
+        self.current_character = None
+        self.running = True
         
         # Set up cross-references
         self.character_manager.set_world_manager(self.world_manager)
         self.data_manager.character_manager = self.character_manager
-        self.command_handler.combat_manager.set_character_manager(self.character_manager)
-
+        self.command_handler.combat_manager = self.combat_manager
+        self.combat_manager.set_character_manager(self.character_manager)
+        
+        # Initialize AI helper
+        print("\nInitializing Gemini AI...", end="", flush=True)
+        try:
+            self.ai_helper = GeminiHelper()
+            self.world_manager.set_ai_helper(self.ai_helper)
+            print("\033[32m [OK]\033[0m")  # Green OK
+        except Exception as e:
+            print("\033[31m [FAILED]\033[0m")  # Red FAILED
+            print(f"Warning: AI features not available - {e}")
+            self.ai_helper = None
+            
     def show_welcome_banner(self):
         """Display the welcome banner with ASCII art."""
         banner = """
 ███╗   ███╗██╗   ██╗██████╗ ███████╗██╗    ██╗ █████╗ 
 ████╗ ████║██║   ██║██╔══██╗██╔════╝██║    ██║██╔══██╗
 ██╔████╔██║██║   ██║██║  ██║█████╗  ██║ █╗ ██║███████║
-██║╚██╔╝██║██║   ██║██║  ██║██╔══╝  ██║███╗██║██╔══██║
+██║ ██╔╝██║██║   ██║██║  ██║██╔══╝  ██║███╗██║██╔══██║
 ██║ ╚═╝ ██║╚██████╔╝██████╔╝███████╗╚███╔███╔╝██║  ██║
 ╚═╝     ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝ ╚══╝╚══╝ ╚═╝  ╚═╝
-                                                       
+                                                        
      ⚔️  A Nostalgic Text Adventure from Saru2.com  🏰
-════════════════════════════════════════════════════════
+══════════════════���═════════════════════════════════════
         This is a solo player MUD, so probably
            should have been called SUD, but...
 ════════════════════════════════════════════════════════
 """
         print(banner)
+            
+    async def process_command(self, command: str) -> Tuple[bool, str]:
+        """Process a command and return the result."""
+        if not command:
+            return False, ""
+            
+        try:
+            # Use the command handler's handle_command method and await it
+            quit_game, response = await self.command_handler.handle_command(self.current_character, command)
+            return quit_game, response
+            
+        except Exception as e:
+            return False, f"Error executing command: {e}"
 
-    def start(self):
+    async def start(self):
         """Start the game."""
         while True:
             self.show_welcome_banner()
@@ -52,7 +92,7 @@ class Game:
             choice = input("\nEnter your choice (1-3): ").strip()
             
             if choice == "1":
-                self.play_game()
+                await self.play_game()
             elif choice == "2":
                 self.content_editors()
             elif choice == "3":
@@ -60,25 +100,6 @@ class Game:
                 break
             else:
                 print("\nInvalid choice. Please try again.")
-
-    def play_game(self):
-        """Start the actual game."""
-        # Character selection/creation menu
-        while not self.character_manager.current_character:
-            choice = self._get_player_choice()
-            if choice == "1":
-                self._create_character()
-            elif choice == "2":
-                self._load_character()
-            elif choice == "3":
-                self._delete_character()
-            elif choice == "4":
-                return  # Return to main menu
-            else:
-                print("Invalid choice. Please try again.")
-
-        # Main game loop
-        self._game_loop()
 
     def content_editors(self):
         """Show content editors menu."""
@@ -151,6 +172,7 @@ class Game:
         name = input("\nEnter your character's name: ").strip()
         if name:
             self.character_manager.create_character(name)
+            self.current_character = name
 
     def _load_character(self) -> None:
         """Handle character loading."""
@@ -166,7 +188,8 @@ class Game:
         try:
             choice = int(input("Enter the number of your character: ").strip())
             if 1 <= choice <= len(characters):
-                self.character_manager.load_character(characters[choice - 1])
+                self.current_character = characters[choice - 1]
+                self.character_manager.load_character(self.current_character)
             else:
                 print("Invalid choice.")
         except ValueError:
@@ -199,38 +222,54 @@ class Game:
                 print("Invalid choice.")
         except ValueError:
             print("Please enter a valid number.")
+            
+    async def play_game(self):
+        """Start the actual game."""
+        # Character selection/creation menu
+        while not self.current_character:
+            choice = self._get_player_choice()
+            if choice == "1":
+                self._create_character()
+            elif choice == "2":
+                self._load_character()
+            elif choice == "3":
+                self._delete_character()
+            elif choice == "4":
+                return  # Return to main menu
+            else:
+                print("Invalid choice. Please try again.")
 
-    def _game_loop(self) -> None:
-        """Main game loop."""
-        # Show initial room description
-        current_room = self.character_manager.get_current_room()
-        print("\n" + self.world_manager.get_room_description(current_room))
-
-        while True:
+        # Initial look at the room (without welcome message)
+        _, description = await self.process_command("look")
+        print(f"\nWelcome, {self.current_character}!")  # Single welcome message
+        print(f"\n{description}")
+        
+        # Main game loop
+        self.running = True
+        while self.running:
             try:
                 command = input("\n> ").strip()
-                character_name = self.character_manager.current_character["name"]
-                should_quit, message = self.command_handler.handle_command(character_name, command)
-                
-                if message:
-                    print("\n" + message)
-                
-                if should_quit:
-                    break
-
+                if not command:
+                    continue
+                    
+                quit_game, response = await self.process_command(command)
+                if response:
+                    print(f"\n{response}")
+                if quit_game:
+                    self.running = False
+                    
             except KeyboardInterrupt:
                 print("\nUse 'quit' to exit the game.")
             except Exception as e:
-                print(f"\nAn error occurred: {str(e)}")
+                print(f"\nError: {e}")
+                
+        if self.ai_helper:
+            await self.ai_helper.close_session()
 
 def main():
     """Entry point for the game."""
     game = Game()
-    try:
-        game.start()
-    except Exception as e:
-        print(f"Fatal error: {str(e)}")
-        print("Game terminated unexpectedly.")
+    asyncio.run(game.start())
 
 if __name__ == "__main__":
     main() 

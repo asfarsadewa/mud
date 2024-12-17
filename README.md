@@ -210,6 +210,48 @@ await ai_helper.close_session()
    - Merchant transactions affect both NPC and character state
    - All state changes are atomic and consistent
 
+   **Quest System:**
+   - Item-based quest system integrated with dialogue
+   - Effects system for quest completion
+   - Multiple reward types
+   
+   **Quest Topic Structure:**
+   ```json
+   {
+     "prompt": "Player's question",
+     "response": "Default response",
+     "item_requirement": "required_item_id",
+     "success_response": "Response when item is present",
+     "effects": {
+       "unlock_merchant": true,      // Unlock premium inventory
+       "remove_item": true,          // Consume quest item
+       "add_item": "reward_item_id", // Give reward item
+       "add_money": 100,             // Give coins
+       "unlock_topics": ["topic_id"] // Unlock new dialogues
+     }
+   }
+   ```
+
+   **Quest Flow Example:**
+   ```
+   Merchant's Lost Key Quest
+   ├── Initial Topic ("wares")
+   │   └── Leads to key topic
+   ├── Quest Topic ("key")
+   │   ├── Requires: key_001
+   │   └── Effects:
+   │       └── unlock_merchant: true
+   └── Result
+       └── Access to premium inventory
+   ```
+
+   **Quest Design Patterns:**
+   - Progressive discovery through dialogue
+   - Multiple quest completion effects
+   - Flexible reward system
+   - State persistence per character
+   - Non-linear quest progression
+
 7. **Portal Design Pattern**
    - World transition system using portals
    - Requirements-based access control

@@ -3,8 +3,8 @@
 ## AI Integration Tasks
 
 ### Core AI Features
-- [ ] Integrate AI-powered room descriptions
-  - [ ] Generate dynamic descriptions based on time of day
+- [x] Integrate AI-powered enhanced room descriptions
+  - [x] Generate dynamic descriptions based on time of day
   - [ ] Add weather effects to descriptions
   - [ ] Include character's state in description context
 

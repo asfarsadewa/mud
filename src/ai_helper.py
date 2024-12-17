@@ -4,93 +4,51 @@ This module provides a base class for AI-powered functionalities.
 """
 
 import os
-import asyncio
-from typing import Optional, Dict, Any, AsyncGenerator
+from typing import Optional, Dict, Any
 from google import genai
 
 class GeminiHelper:
     """Base class for Gemini 2.0 AI integration."""
     
     def __init__(self, api_key: Optional[str] = None, model_id: str = "gemini-2.0-flash-exp"):
-        """
-        Initialize the Gemini AI helper.
-        
-        Args:
-            api_key: Google AI API key. If not provided, will try to get from GOOGLE_API_KEY env variable.
-            model_id: The model ID to use. Defaults to gemini-2.0-flash-exp.
-        """
+        """Initialize the Gemini AI helper."""
         self.api_key = api_key or os.getenv("GOOGLE_API_KEY")
         if not self.api_key:
             raise ValueError("Google API key is required. Set GOOGLE_API_KEY environment variable or pass it directly.")
         
-        # Initialize the Gemini client
-        self.client = genai.Client(api_key=self.api_key)
-        self.model_id = model_id
-        self.session = None
-        
-    async def start_session(self, config: Optional[Dict[str, Any]] = None) -> None:
-        """
-        Start a new live session with optional configuration.
-        
-        Args:
-            config: Optional configuration for the session.
-        """
-        default_config = {"response_modalities": ["TEXT"]}
-        session_config = config or default_config
-        
-        self.session = await self.client.aio.live.connect(
-            model=self.model_id,
-            config=session_config
-        ).__aenter__()
+        try:
+            self.client = genai.Client(api_key=self.api_key)
+            self.model_id = model_id
+        except Exception as e:
+            raise ValueError(f"Failed to initialize Gemini client: {str(e)}")
         
     async def generate_response(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> str:
-        """
-        Generate a response using the Gemini model.
-        
-        Args:
-            prompt: The input prompt for the model
-            context: Optional additional context as a dictionary
-            
-        Returns:
-            str: The generated response
-        """
+        """Generate a response using the Gemini model."""
         try:
-            # Format the prompt with context if provided
-            formatted_prompt = f"{prompt}\nContext: {context}" if context else prompt
-            
-            # For simple one-off responses without a session
-            response = await self.client.models.generate_content(
-                model=self.model_id,
-                contents=formatted_prompt
-            )
-            return response.text
-            
-        except Exception as e:
-            return f"Error generating response: {str(e)}"
-            
-    async def chat_response(self, message: str) -> AsyncGenerator[str, None]:
-        """
-        Send a message in chat mode and yield responses as they come.
-        
-        Args:
-            message: The message to send
-            
-        Yields:
-            Streamed responses from the model
-        """
-        if not self.session:
-            await self.start_session()
-            
-        try:
-            await self.session.send(message, end_of_turn=True)
-            async for response in self.session.receive():
-                yield response.text
+            # Prepare the prompt with context if provided
+            full_prompt = prompt
+            if context:
+                context_str = "\nContext:\n" + "\n".join(f"{k}: {v}" for k, v in context.items())
+                full_prompt += context_str
                 
-        except Exception as e:
-            yield f"Error in chat response: {str(e)}"
+            # Generate content
+            response = self.client.models.generate_content(
+                model=self.model_id,
+                contents=full_prompt
+            )
+            
+            if not response or not response.text:
+                return prompt
+                
+            response_text = response.text.strip()
+            if not response_text or response_text == full_prompt:
+                return prompt
+                
+            return response_text
+            
+        except Exception:
+            return prompt
             
     async def close_session(self) -> None:
-        """Close the current session if one exists."""
-        if self.session:
-            await self.session.__aexit__(None, None, None)
-            self.session = None 
+        """Placeholder for compatibility."""
+        pass

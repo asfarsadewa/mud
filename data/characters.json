@@ -2,7 +2,7 @@
   "characters": [
     {
       "name": "TestHero",
-      "current_room": "temple_shrine_001",
+      "current_room": "forest_edge_001",
       "inventory": [
         "ancient_coin_001",
         "ancient_coin_001",
@@ -31,7 +31,8 @@
         "spirit_crystal_001",
         "ancient_coin_001",
         "key_001",
-        "key_001"
+        "key_001",
+        "magic_scroll_001"
       ],
       "equipment": {
         "weapon": "rusty_sword_001",
@@ -53,7 +54,7 @@
         "level": 5,
         "max_hp": 140,
         "current_hp": 136,
-        "attack": 24,
+        "attack": 18,
         "defense": 9,
         "xp": 315,
         "xp_to_next_level": 505,
@@ -70,14 +71,14 @@
           "grove",
           "spirits",
           "power"
+        ],
+        "merchant_001": [
+          "wares",
+          "key"
         ]
       },
       "money": 240,
-      "defeated_mobs": {
-        "temple_shrine_001": [
-          "skeleton_001"
-        ]
-      },
+      "defeated_mobs": {},
       "world_state": {
         "removed_items": {}
       }

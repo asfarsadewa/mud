@@ -104,7 +104,6 @@ class CharacterManager:
             current_world = self.determine_world_from_room(character["current_room"])
             self.world_manager.change_world(current_world)
 
-        print(f"Welcome back, {name}!")
         return True
 
     def save_character(self) -> None:

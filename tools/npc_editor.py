@@ -52,7 +52,7 @@ class NPCEditor:
                 break
 
             topic = {
-                "prompt": input("Enter topic prompt: ").strip(),
+                "prompt": input("Enter topic prompt (what player can ask): ").strip(),
                 "response": input("Enter NPC's response: ").strip()
             }
 
@@ -70,6 +70,39 @@ class NPCEditor:
                 if leads_to:
                     topic["leads_to"] = leads_to
 
+            if input("Does this topic require an item? (y/n): ").strip().lower() == 'y':
+                topic["item_requirement"] = input("Enter required item ID: ").strip()
+                topic["success_response"] = input("Enter response when player has the item: ").strip()
+                
+                # Handle effects
+                print("\nAdd effects when item requirement is met:")
+                effects = {}
+                
+                if input("Unlock merchant's premium inventory? (y/n): ").strip().lower() == 'y':
+                    effects["unlock_merchant"] = True
+                
+                if input("Remove the required item? (y/n): ").strip().lower() == 'y':
+                    effects["remove_item"] = True
+                
+                if input("Give a reward item? (y/n): ").strip().lower() == 'y':
+                    effects["add_item"] = input("Enter item ID to give: ").strip()
+                
+                if input("Give money reward? (y/n): ").strip().lower() == 'y':
+                    effects["add_money"] = int(input("Enter amount of coins: ").strip())
+                
+                if input("Unlock additional topics? (y/n): ").strip().lower() == 'y':
+                    unlock_topics = []
+                    while True:
+                        topic_to_unlock = input("Enter topic ID to unlock (or press Enter to finish): ").strip()
+                        if not topic_to_unlock:
+                            break
+                        unlock_topics.append(topic_to_unlock)
+                    if unlock_topics:
+                        effects["unlock_topics"] = unlock_topics
+                
+                if effects:
+                    topic["effects"] = effects
+
             if input("Is this a trade topic? (y/n): ").strip().lower() == 'y':
                 topic["is_trade"] = True
 
@@ -82,8 +115,7 @@ class NPCEditor:
         merchant_data = {
             "inventory": {},
             "buy_multiplier": float(input("Enter buy multiplier (e.g., 0.5 for 50%): ").strip() or "0.5"),
-            "unlocked": input("Is premium inventory unlocked? (y/n): ").strip().lower() == 'y',
-            "premium_inventory": {}
+            "unlocked": input("Is premium inventory unlocked by default? (y/n): ").strip().lower() == 'y'
         }
 
         # Regular inventory
@@ -100,6 +132,7 @@ class NPCEditor:
 
         # Premium inventory
         if input("\nAdd premium inventory items? (y/n): ").strip().lower() == 'y':
+            merchant_data["premium_inventory"] = {}
             print("\nAdd Premium Inventory Items")
             while True:
                 item_id = input("Enter item ID (or press Enter to finish): ").strip()
