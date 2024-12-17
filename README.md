@@ -1,6 +1,6 @@
 # MUDewa - a solo player MUD (lol)
 
-A simple, JSON-based MUD (Multi-User Dungeon) game written in Python. This single-player MUD allows you to explore a text-based world, interact with items, and save your progress.
+A simple, JSON-based MUD (Multi-User Dungeon) game written in Python. This single-player MUD allows you to explore a text-based world, interact with items, and auto-save your progress. This game has also sprinkles of AI here and there that I am still developing.
 
 ## Architecture Overview
 
@@ -68,10 +68,10 @@ GOOGLE_API_KEY=your_api_key_here
 #### AI Helper Features
 
 The `GeminiHelper` class provides:
-- Asynchronous chat sessions with context management
-- One-off response generation
-- Support for streaming responses
-- Proper session cleanup and error handling
+- Async-compatible interface with synchronous Gemini API calls
+- Context-aware response generation
+- Basic error handling and fallback responses
+- Simple session cleanup
 
 Example Usage:
 ```python
@@ -80,15 +80,11 @@ from src.ai_helper import GeminiHelper
 # Initialize the helper
 ai_helper = GeminiHelper()
 
-# Generate a one-off response
+# Generate a response (async signature but synchronous operation)
 response = await ai_helper.generate_response(
     "Describe this location",
     context={"location": "dark forest", "time": "midnight"}
 )
-
-# Start a chat session with streaming responses
-async for response in ai_helper.chat_response("Tell me about this place"):
-    print(response)  # Process streamed responses
 
 # Clean up
 await ai_helper.close_session()
