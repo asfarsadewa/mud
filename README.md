@@ -53,6 +53,47 @@ CharacterManager  WorldManager    CombatManager
 CommandHandler (coordinates between managers)
 ```
 
+### AI Integration with Gemini 2.0
+
+The game integrates Google's Gemini 2.0 AI model for enhanced gameplay features. The integration is handled through the `GeminiHelper` class in `src/ai_helper.py`.
+
+#### Setup Requirements
+
+1. Get a Google API key from [Google AI Studio](https://ai.google.dev/)
+2. Create a `.env` file in the root directory with your API key:
+```bash
+GOOGLE_API_KEY=your_api_key_here
+```
+
+#### AI Helper Features
+
+The `GeminiHelper` class provides:
+- Asynchronous chat sessions with context management
+- One-off response generation
+- Support for streaming responses
+- Proper session cleanup and error handling
+
+Example Usage:
+```python
+from src.ai_helper import GeminiHelper
+
+# Initialize the helper
+ai_helper = GeminiHelper()
+
+# Generate a one-off response
+response = await ai_helper.generate_response(
+    "Describe this location",
+    context={"location": "dark forest", "time": "midnight"}
+)
+
+# Start a chat session with streaming responses
+async for response in ai_helper.chat_response("Tell me about this place"):
+    print(response)  # Process streamed responses
+
+# Clean up
+await ai_helper.close_session()
+```
+
 ### Key Design Patterns
 
 1. **Manager Pattern**
@@ -269,6 +310,11 @@ source venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
+
+4. Set up AI integration (optional):
+   - Get an API key from [Google AI Studio](https://ai.google.dev/)
+   - Create a `.env` file in the root directory
+   - Add your API key: `GOOGLE_API_KEY=your_api_key_here`
 
 ## Running the Game
 
