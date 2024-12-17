@@ -1,6 +1,7 @@
 # MUDewa - a solo player MUD with some AI (Gemini)
 
-A simple, JSON-based MUD (Multi-User Dungeon) game written in Python. This single-player MUD allows you to explore a text-based world, interact with items, and auto-save your progress. This game has also sprinkles of AI here and there that I am still developing.
+A JSON-based MUD (Multi-User Dungeon) game written in Python. This single-player MUD (SUD) allows you to explore a text-based world, interact with items, and auto-save your progress. This game has also sprinkles of AI here and there that I am still developing.
+This is a love letter to SDFMud, a world I lived in more than two decades ago.
 
 ## Architecture Overview
 
