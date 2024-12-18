@@ -110,7 +110,72 @@ await ai_helper.close_session()
    - WorldManager: World state
    - CombatManager: Combat mechanics
 
-4. **Character-Specific World State**
+4. **Character Class System**
+   - JSON-based class definitions for extensibility
+   - Each class has unique attributes and progression
+   ```json
+   Class Structure
+   ├── Basic Info
+   │   ├── ID and Name
+   │   └── Description
+   ├── Base Stats
+   │   ├── HP Bonus
+   │   ├── Attack Bonus
+   │   ├── Defense Bonus
+   │   └── Weight Limit Bonus
+   ├── Level Gains
+   │   ├── HP per Level
+   │   ├── Attack per Level
+   │   ├── Defense per Level
+   │   └── Weight Limit per Level
+   └── Starting Equipment
+   ```
+   
+   **Core Features:**
+   - Class-specific stat bonuses and progression
+   - Starting equipment loadouts
+   - Extensible for future class abilities
+   - Balanced stat distribution
+   
+   **Implementation Details:**
+   - Classes defined in `data/classes.json`
+   - Class selection during character creation
+   - Class-specific level-up calculations
+   - Stats display shows class information
+   
+   **Example Class Definition:**
+   ```json
+   {
+     "id": "warrior",
+     "name": "Warrior",
+     "description": "A mighty warrior skilled in combat and physical prowess.",
+     "base_stats": {
+       "hp_bonus": 20,
+       "attack_bonus": 3,
+       "defense_bonus": 2,
+       "weight_limit_bonus": 5.0
+     },
+     "level_gains": {
+       "hp": 15,
+       "attack": 2,
+       "defense": 1,
+       "weight_limit": 2.5
+     }
+   }
+   ```
+
+   **Character State Integration:**
+   ```json
+   Character Data Structure
+   ├── Basic Info
+   │   ├── Name
+   │   └── Class ID
+   ├── Base Stats (with class bonuses)
+   ├── Current Stats (affected by level)
+   └── Equipment
+   ```
+
+5. **Character-Specific World State**
    - Each character maintains their own view of the world
    - Tracks removed items and respawn timers independently
    - Prevents item state conflicts between characters
@@ -130,7 +195,7 @@ await ai_helper.close_session()
    }
    ```
 
-5. **Item Management System**
+6. **Item Management System**
    - Weight-based inventory system
    - Character weight limits (base + level bonus)
    - Item respawn mechanics
@@ -147,7 +212,7 @@ await ai_helper.close_session()
    }
    ```
 
-6. **NPC Interaction Pattern**
+7. **NPC Interaction Pattern**
    - Dialogue-based interaction system
    - Progressive topic discovery
    - Specialized NPC types (e.g., merchants)
@@ -249,7 +314,7 @@ await ai_helper.close_session()
    - State persistence per character
    - Non-linear quest progression
 
-7. **Portal Design Pattern**
+8. **Portal Design Pattern**
    - World transition system using portals
    - Requirements-based access control
    - Bidirectional portal connections
@@ -434,6 +499,3 @@ The game uses JSON files for data storage:
 }
 ```
 
-## License
-
-MIT License - See LICENSE file for details 

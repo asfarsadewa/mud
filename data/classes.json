@@ -1,0 +1,64 @@
+{
+  "classes": [
+    {
+      "id": "warrior",
+      "name": "Warrior",
+      "description": "A mighty warrior skilled in combat and physical prowess.",
+      "base_stats": {
+        "hp_bonus": 20,
+        "attack_bonus": 3,
+        "defense_bonus": 2,
+        "weight_limit_bonus": 5.0
+      },
+      "level_gains": {
+        "hp": 15,
+        "attack": 2,
+        "defense": 1,
+        "weight_limit": 2.5
+      },
+      "starting_equipment": {
+        "weapon": "rusty_sword_001"
+      }
+    },
+    {
+      "id": "mage",
+      "name": "Mage",
+      "description": "A wielder of arcane magic with powerful spells.",
+      "base_stats": {
+        "hp_bonus": 0,
+        "attack_bonus": 0,
+        "defense_bonus": 0,
+        "weight_limit_bonus": 0.0
+      },
+      "level_gains": {
+        "hp": 8,
+        "attack": 1,
+        "defense": 0.5,
+        "weight_limit": 1.0
+      },
+      "starting_equipment": {
+        "weapon": "magic_scroll_001"
+      }
+    },
+    {
+      "id": "rogue",
+      "name": "Rogue",
+      "description": "A nimble adventurer skilled in stealth and cunning.",
+      "base_stats": {
+        "hp_bonus": 10,
+        "attack_bonus": 2,
+        "defense_bonus": 1,
+        "weight_limit_bonus": 2.0
+      },
+      "level_gains": {
+        "hp": 10,
+        "attack": 1.5,
+        "defense": 0.8,
+        "weight_limit": 1.5
+      },
+      "starting_equipment": {
+        "weapon": "enchanted_dagger_001"
+      }
+    }
+  ]
+} 

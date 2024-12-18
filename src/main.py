@@ -170,9 +170,32 @@ class Game:
     def _create_character(self) -> None:
         """Handle character creation."""
         name = input("\nEnter your character's name: ").strip()
-        if name:
-            self.character_manager.create_character(name)
-            self.current_character = name
+        if not name:
+            return
+
+        # Show available classes
+        print("\nAvailable Classes:")
+        classes = self.character_manager.get_available_classes()
+        for i, class_data in enumerate(classes, 1):
+            print(f"{i}. {class_data['name']}")
+            print(f"   {class_data['description']}")
+            print(f"   Base Stats: HP +{class_data['base_stats']['hp_bonus']}, " +
+                  f"Attack +{class_data['base_stats']['attack_bonus']}, " +
+                  f"Defense +{class_data['base_stats']['defense_bonus']}")
+            print()
+
+        while True:
+            try:
+                choice = int(input("Choose your class (1-3): ").strip())
+                if 1 <= choice <= len(classes):
+                    class_id = classes[choice - 1]["id"]
+                    self.character_manager.create_character(name, class_id)
+                    self.current_character = name
+                    break
+                else:
+                    print("Invalid choice.")
+            except ValueError:
+                print("Please enter a valid number.")
 
     def _load_character(self) -> None:
         """Handle character loading."""

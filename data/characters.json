@@ -2,6 +2,7 @@
   "characters": [
     {
       "name": "TestHero",
+      "class": "warrior",
       "current_room": "forest_edge_001",
       "inventory": [
         "ancient_coin_001",
@@ -32,7 +33,8 @@
         "ancient_coin_001",
         "key_001",
         "key_001",
-        "magic_scroll_001"
+        "magic_scroll_001",
+        "wolf_pelt_001"
       ],
       "equipment": {
         "weapon": "rusty_sword_001",
@@ -42,23 +44,23 @@
       },
       "base_stats": {
         "level": 1,
-        "max_hp": 100,
+        "max_hp": 120,
         "current_hp": 32,
-        "attack": 10,
-        "defense": 5,
+        "attack": 13,
+        "defense": 7,
         "xp": 0,
         "xp_to_next_level": 100,
-        "weight_limit": 20.0
+        "weight_limit": 25.0
       },
       "stats": {
         "level": 5,
-        "max_hp": 140,
-        "current_hp": 136,
-        "attack": 18,
-        "defense": 9,
-        "xp": 315,
+        "max_hp": 180,
+        "current_hp": 135,
+        "attack": 21,
+        "defense": 11,
+        "xp": 335,
         "xp_to_next_level": 505,
-        "weight_limit": 28.0
+        "weight_limit": 35.0
       },
       "combat_state": {
         "in_combat": false,
@@ -78,7 +80,11 @@
         ]
       },
       "money": 240,
-      "defeated_mobs": {},
+      "defeated_mobs": {
+        "forest_edge_001": [
+          "wolf_001"
+        ]
+      },
       "world_state": {
         "removed_items": {}
       }

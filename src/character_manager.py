@@ -1,30 +1,56 @@
 from typing import Dict, List, Optional, Set
 from .data_manager import DataManager
+import os
+import json
 
 class CharacterManager:
     def __init__(self, data_manager: DataManager):
         self.data_manager = data_manager
         self.current_character: Optional[Dict] = None
         self.world_manager = None  # Will be set by main.py
+        self.classes_data = self._load_classes()
 
-    def set_world_manager(self, world_manager) -> None:
-        """Set the world manager reference."""
-        self.world_manager = world_manager
+    def _load_classes(self) -> Dict:
+        """Load character classes data."""
+        try:
+            with open(os.path.join("data", "classes.json"), 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            print("Warning: classes.json not found!")
+            return {"classes": []}
 
-    def determine_world_from_room(self, room_id: str) -> str:
-        """Determine which world a room belongs to."""
-        if room_id.startswith("spirit_"):
-            return "spirit_realm"
-        return "default"
+    def get_available_classes(self) -> List[Dict]:
+        """Get list of available character classes."""
+        return self.classes_data.get("classes", [])
 
-    def create_character(self, name: str) -> bool:
-        """Create a new character."""
+    def get_class_by_id(self, class_id: str) -> Optional[Dict]:
+        """Get class data by ID."""
+        for class_data in self.classes_data.get("classes", []):
+            if class_data["id"] == class_id:
+                return class_data
+        return None
+
+    def create_character(self, name: str, class_id: str = "warrior") -> bool:
+        """Create a new character with specified class."""
         if self.data_manager.get_character(name):
             print(f"Character '{name}' already exists.")
             return False
 
+        # Get class data
+        class_data = self.get_class_by_id(class_id)
+        if not class_data:
+            print(f"Invalid class ID: {class_id}")
+            return False
+
+        # Apply class bonuses to base stats
+        base_hp = 100 + class_data["base_stats"]["hp_bonus"]
+        base_attack = 10 + class_data["base_stats"]["attack_bonus"]
+        base_defense = 5 + class_data["base_stats"]["defense_bonus"]
+        base_weight_limit = 20.0 + class_data["base_stats"]["weight_limit_bonus"]
+
         character = {
             "name": name,
+            "class": class_id,
             "current_room": "forest_clearing_001",  # Starting room
             "inventory": [],
             "equipment": {
@@ -35,23 +61,23 @@ class CharacterManager:
             },
             "base_stats": {
                 "level": 1,
-                "max_hp": 100,
-                "current_hp": 100,
-                "attack": 10,
-                "defense": 5,
+                "max_hp": base_hp,
+                "current_hp": base_hp,
+                "attack": base_attack,
+                "defense": base_defense,
                 "xp": 0,
                 "xp_to_next_level": 100,
-                "weight_limit": 20.0
+                "weight_limit": base_weight_limit
             },
             "stats": {
                 "level": 1,
-                "max_hp": 100,
-                "current_hp": 100,
-                "attack": 10,
-                "defense": 5,
+                "max_hp": base_hp,
+                "current_hp": base_hp,
+                "attack": base_attack,
+                "defense": base_defense,
                 "xp": 0,
                 "xp_to_next_level": 100,
-                "weight_limit": 20.0
+                "weight_limit": base_weight_limit
             },
             "combat_state": {
                 "in_combat": False,
@@ -67,10 +93,180 @@ class CharacterManager:
             }
         }
 
+        # Add starting equipment
+        if "starting_equipment" in class_data:
+            for slot, item_id in class_data["starting_equipment"].items():
+                character["equipment"][slot] = item_id
+
         self.current_character = character
         self.data_manager.add_character(character)
-        print(f"\nCharacter '{name}' created successfully!")
+        print(f"\nCharacter '{name}' created successfully as a {class_data['name']}!")
         return True
+
+    def level_up(self, character: Dict) -> None:
+        """Handle character level up with class-specific gains."""
+        class_data = self.get_class_by_id(character.get("class", "warrior"))
+        if not class_data:
+            # Fallback to default gains if class not found
+            super().level_up(character)
+            return
+
+        gains = class_data["level_gains"]
+        character["stats"]["level"] += 1
+        character["stats"]["max_hp"] += gains["hp"]
+        character["stats"]["current_hp"] = character["stats"]["max_hp"]
+        character["stats"]["attack"] += gains["attack"]
+        character["stats"]["defense"] += gains["defense"]
+        character["stats"]["weight_limit"] += gains["weight_limit"]
+        character["stats"]["xp"] -= character["stats"]["xp_to_next_level"]
+        character["stats"]["xp_to_next_level"] = int(character["stats"]["xp_to_next_level"] * 1.5)
+
+    def get_fancy_stats(self) -> str:
+        """Generate a fancy ASCII-art stats display with class information."""
+        if not self.current_character:
+            raise RuntimeError("No character is currently loaded")
+        
+        char = self.current_character
+        stats = char["stats"]
+        
+        # Get class information
+        class_data = self.get_class_by_id(char.get("class", "warrior"))
+        class_name = class_data["name"] if class_data else "Unknown Class"
+        
+        # Calculate derived stats
+        hp_percent = (stats["current_hp"] / stats["max_hp"]) * 100
+        xp_percent = (stats["xp"] / stats["xp_to_next_level"]) * 100
+        
+        # Calculate total weight carried
+        total_weight = self.calculate_total_weight()
+        
+        # Generate health and XP bars
+        hp_bar = self._generate_progress_bar(hp_percent, 20)
+        xp_bar = self._generate_progress_bar(xp_percent, 20)
+        
+        # Get equipment info
+        equipment = char["equipment"]
+        equipped_items = {}
+        for slot in ["weapon", "armor", "ring", "amulet"]:
+            item_id = equipment.get(slot)
+            if item_id:
+                item = self.data_manager.get_item(item_id)
+                if item:
+                    weight_str = f" ({item['properties'].get('weight', 0):.1f}kg)"
+                    equipped_items[slot.title()] = (item["short_desc"] + weight_str)[:20]
+                else:
+                    equipped_items[slot.title()] = "None"
+            else:
+                equipped_items[slot.title()] = "None"
+        
+        # Format the stats display with proper spacing and class information
+        stats_display = f"""
+╔══════════════════════════════════════════════════════════╗
+║  {char['name']:<25} Class: {class_name:<15} ║
+╠══════════════════════════════════════════════════════════╣
+║  Level: {stats['level']:<5}                Gold: {char.get('money', 0):<14}║
+║  Weight Carried: {total_weight:.1f}kg                                  ║
+║                                                          ║
+║  HP: {stats['current_hp']}/{stats['max_hp']:<48}║
+║  [{hp_bar}] {hp_percent:>3.0f}%                        ║
+║                                                          ║
+║  XP: {stats['xp']}/{stats['xp_to_next_level']:<48}║
+║  [{xp_bar}] {xp_percent:>3.0f}%                        ║
+╠══════════════════════════════════════════════════════════╣
+║  COMBAT STATS                   EQUIPMENT                ║
+║  ───────────────               ──────────               ║
+║  Attack:  {stats['attack']:<6}             Weapon:  {equipped_items['Weapon']:<14}║
+║  Defense: {stats['defense']:<6}             Armor:   {equipped_items['Armor']:<14}║
+║                                Ring:    {equipped_items['Ring']:<14}║
+║                                Amulet:  {equipped_items['Amulet']:<14}║"""
+
+        # Add inventory section
+        sections = [stats_display]
+        
+        # Group items and count quantities
+        item_counts = {}
+        item_details = {}  # Store full item details for display
+        
+        for item_id in char["inventory"]:
+            item = self.data_manager.get_item(item_id)
+            if not item:
+                continue
+            
+            # Use short_desc as the display key
+            display_name = item["short_desc"]
+            item_counts[display_name] = item_counts.get(display_name, 0) + 1
+            item_details[display_name] = item
+
+        # Categorize items
+        categories = {
+            "WEAPONS": [],
+            "ARMOR": [],
+            "CONSUMABLES": [],
+            "QUEST ITEMS": [],
+            "VALUABLES": [],
+            "MISCELLANEOUS": []
+        }
+
+        for display_name, item in item_details.items():
+            # Skip if item is equipped
+            is_equipped = False
+            for equipped_id in char["equipment"].values():
+                if equipped_id and self.data_manager.get_item(equipped_id)["short_desc"] == display_name:
+                    is_equipped = True
+                    break
+            if is_equipped:
+                continue
+
+            count = item_counts[display_name]
+            weight = item["properties"].get("weight", 0)
+            count_str = f" (x{count})" if count > 1 else ""
+            weight_str = f" [{weight:.1f}kg]"
+            item_line = f"  {display_name}{count_str}{weight_str}"
+
+            props = item.get("properties", {})
+            item_type = props.get("type", "misc")
+
+            if item_type == "weapon":
+                categories["WEAPONS"].append(item_line)
+            elif item_type == "armor":
+                categories["ARMOR"].append(item_line)
+            elif item_type == "consumable":
+                categories["CONSUMABLES"].append(item_line)
+            elif item_type == "quest":
+                categories["QUEST ITEMS"].append(item_line)
+            elif item_type == "valuable":
+                categories["VALUABLES"].append(item_line)
+            else:
+                categories["MISCELLANEOUS"].append(item_line)
+
+        # Add inventory header
+        sections.append("╠══════════════════════════════════════════════════════════╣")
+        sections.append("║                     INVENTORY                            ║")
+        sections.append("╠══════════════════════════════════════════════════════════╣")
+
+        # Add categories to display
+        for category, items in categories.items():
+            if items:
+                sections.append(f"║  {category:<52}║")
+                sections.append("║  ──────────────                                        ║")
+                for item in sorted(items):
+                    sections.append(f"║  {item:<52}║")
+                sections.append("║                                                          ║")
+
+        # Add footer
+        sections.append("╚══════════════════════════════════════════════════════════╝")
+
+        return "\n".join(sections)
+
+    def set_world_manager(self, world_manager) -> None:
+        """Set the world manager reference."""
+        self.world_manager = world_manager
+
+    def determine_world_from_room(self, room_id: str) -> str:
+        """Determine which world a room belongs to."""
+        if room_id.startswith("spirit_"):
+            return "spirit_realm"
+        return "default"
 
     def load_character(self, name: str) -> bool:
         """Load an existing character."""
@@ -246,155 +442,6 @@ class CharacterManager:
         current_room = self.current_character["current_room"]
         return mob_id in self.current_character["defeated_mobs"].get(current_room, []) 
 
-    def get_fancy_stats(self) -> str:
-        """Generate a fancy ASCII-art stats display."""
-        if not self.current_character:
-            raise RuntimeError("No character is currently loaded")
-        
-        char = self.current_character
-        stats = char["stats"]
-        
-        # Calculate derived stats
-        hp_percent = (stats["current_hp"] / stats["max_hp"]) * 100
-        xp_percent = (stats["xp"] / stats["xp_to_next_level"]) * 100
-        
-        # Calculate total weight carried
-        total_weight = 0.0
-        inventory_weights = {}  # Store weights for display in inventory
-        
-        # Add weights from inventory
-        for item_id in char["inventory"]:
-            item = self.data_manager.get_item(item_id)
-            if item and "weight" in item.get("properties", {}):
-                weight = item["properties"]["weight"]
-                total_weight += weight
-                inventory_weights[item["short_desc"]] = weight
-        
-        # Add weights from equipped items
-        for slot, equipped_id in char["equipment"].items():
-            if equipped_id:
-                item = self.data_manager.get_item(equipped_id)
-                if item and "weight" in item.get("properties", {}):
-                    total_weight += item["properties"]["weight"]
-        
-        # Generate health and XP bars
-        hp_bar = self._generate_progress_bar(hp_percent, 20)
-        xp_bar = self._generate_progress_bar(xp_percent, 20)
-        
-        # Get equipment info with proper handling of None values
-        equipment = char["equipment"]
-        equipped_items = {}
-        for slot in ["weapon", "armor", "ring", "amulet"]:
-            item_id = equipment.get(slot)
-            if item_id:
-                item = self.data_manager.get_item(item_id)
-                if item:
-                    weight_str = f" ({item['properties'].get('weight', 0):.1f}kg)"
-                    equipped_items[slot.title()] = (item["short_desc"] + weight_str)[:20]
-                else:
-                    equipped_items[slot.title()] = "None"
-            else:
-                equipped_items[slot.title()] = "None"
-        
-        # Format the stats display with proper spacing
-        stats_display = f"""
-╔══════════════════════════════════════════════════════════╗
-║                     {char['name']:<37}║
-╠══════════════════════════════════════════════════════════╣
-║  Level: {stats['level']:<5}                Gold: {char.get('money', 0):<14}║
-║  Weight Carried: {total_weight:.1f}kg                                  ║
-║                                                          ║
-║  HP: {stats['current_hp']}/{stats['max_hp']:<48}║
-║  [{hp_bar}] {hp_percent:>3.0f}%                        ║
-║                                                          ║
-║  XP: {stats['xp']}/{stats['xp_to_next_level']:<48}║
-║  [{xp_bar}] {xp_percent:>3.0f}%                        ║
-╠══════════════════════════════════════════════════════════╣
-║  COMBAT STATS                   EQUIPMENT                ║
-║  ───────────────               ──────────               ║
-║  Attack:  {stats['attack']:<6}             Weapon:  {equipped_items['Weapon']:<14}║
-║  Defense: {stats['defense']:<6}             Armor:   {equipped_items['Armor']:<14}║
-║                                Ring:    {equipped_items['Ring']:<14}║
-║                                Amulet:  {equipped_items['Amulet']:<14}║"""
-
-        # Add inventory section with weights
-        sections = [stats_display]
-        
-        # Group items and count quantities with weights
-        item_counts = {}
-        item_details = {}  # Store full item details for display
-        
-        for item_id in char["inventory"]:
-            item = self.data_manager.get_item(item_id)
-            if not item:
-                continue
-            
-            # Use short_desc as the display key
-            display_name = item["short_desc"]
-            item_counts[display_name] = item_counts.get(display_name, 0) + 1
-            item_details[display_name] = item
-
-        # Categorize items
-        categories = {
-            "WEAPONS": [],
-            "ARMOR": [],
-            "CONSUMABLES": [],
-            "QUEST ITEMS": [],
-            "VALUABLES": [],
-            "MISCELLANEOUS": []
-        }
-
-        for display_name, item in item_details.items():
-            # Skip if item is equipped
-            is_equipped = False
-            for equipped_id in char["equipment"].values():
-                if equipped_id and self.data_manager.get_item(equipped_id)["short_desc"] == display_name:
-                    is_equipped = True
-                    break
-            if is_equipped:
-                continue
-
-            count = item_counts[display_name]
-            weight = item["properties"].get("weight", 0)
-            count_str = f" (x{count})" if count > 1 else ""
-            weight_str = f" [{weight:.1f}kg]"
-            item_line = f"  {display_name}{count_str}{weight_str}"
-
-            props = item.get("properties", {})
-            item_type = props.get("type", "misc")
-
-            if item_type == "weapon":
-                categories["WEAPONS"].append(item_line)
-            elif item_type == "armor":
-                categories["ARMOR"].append(item_line)
-            elif item_type == "consumable":
-                categories["CONSUMABLES"].append(item_line)
-            elif item_type == "quest":
-                categories["QUEST ITEMS"].append(item_line)
-            elif item_type == "valuable":
-                categories["VALUABLES"].append(item_line)
-            else:
-                categories["MISCELLANEOUS"].append(item_line)
-
-        # Add inventory header
-        sections.append("╠══════════════════════════════════════════════════════════╣")
-        sections.append("║                     INVENTORY                            ║")
-        sections.append("╠══════════════════════════════════════════════════════════╣")
-
-        # Add categories to display
-        for category, items in categories.items():
-            if items:
-                sections.append(f"║  {category:<52}║")
-                sections.append("║  ──────────────                                        ║")
-                for item in sorted(items):
-                    sections.append(f"║  {item:<52}║")
-                sections.append("║                                                          ║")
-
-        # Add footer
-        sections.append("╚══════════════════════════════════════════════════════════╝")
-
-        return "\n".join(sections)
-
     def _generate_progress_bar(self, percentage: float, length: int = 20) -> str:
         """Generate a progress bar with custom characters."""
         fill_length = int((percentage / 100) * length)
@@ -431,17 +478,6 @@ class CharacterManager:
         weight_limit = self.current_character["stats"]["weight_limit"]
         
         return (current_weight + additional_weight) <= weight_limit
-
-    def level_up(self, character: Dict) -> None:
-        """Handle character level up with weight limit increase."""
-        character["stats"]["level"] += 1
-        character["stats"]["max_hp"] += 10
-        character["stats"]["current_hp"] = character["stats"]["max_hp"]
-        character["stats"]["attack"] += 2
-        character["stats"]["defense"] += 1
-        character["stats"]["weight_limit"] += 2.0  # Increase weight limit by 2kg per level
-        character["stats"]["xp"] -= character["stats"]["xp_to_next_level"]
-        character["stats"]["xp_to_next_level"] = int(character["stats"]["xp_to_next_level"] * 1.5)
 
     def get_current_room_items(self) -> List[str]:
         """Get list of items in the current room."""
